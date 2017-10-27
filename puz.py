@@ -1,20 +1,22 @@
 import sys
 import numpy as np
 import copy
-
-
+import Queue as Q
 class child():
-    def __init__(self, n, cost):
+    def __init__(self, n,state, cost):
+          self.Cost = cost
           self.Node = n
           self.Cost = cost
-          self.STATE = None
+          self.STATE = state
+    def __cmp__(self, other):
+        return cmp(self.Cost, other.priority)
 
 
 
 class problem():
     def __init__(self,initial_node, state, cost,g):
       self.node = copy.deepcopy(initial_node)
-      self.C = 0
+      self.C = 1
       self.initial_state = None
       self.goal = g
     def Goal_Test(node):
@@ -60,12 +62,19 @@ class problem():
         return martixs
 
 
-
-
-#
-# def Unifor_Cost_Search(problem):
-#     child = copy.deepcopy(problem)
-
+def Unifor_Cost_Search(problem):
+    node = child(problem.node,"problem", 0)
+    frontier =  Q.PriorityQueue()
+    frontier.put(node)
+    explore = []
+    while True:
+        if frontier.empty():
+            return 'failure'
+        node = frontier.get()
+        if problem.Goal_Test(node.Node):
+            return node.Node
+        for eachAction in problem.Actions(node.Node):
+            childa = child(eachAction,"problem",node.Cost+1)
 
 if __name__ == "__main__":
     goal = np.matrix([[1,2,3], [4,5,6], [7,8,0]])
