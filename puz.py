@@ -4,12 +4,13 @@ import copy
 import Queue as Q
 class child():
     def __init__(self, n,state, cost):
+          self.priority = cost
           self.Cost = cost
           self.Node = n
           self.Cost = cost
           self.STATE = state
     def __cmp__(self, other):
-        return cmp(self.Cost, other.priority)
+        return cmp(self.priority, other.priority)
 
 class problem():
     def __init__(self,initial_node, state, cost,g):
@@ -80,14 +81,18 @@ class problem():
 
         return matrixs
 def notFrontierOrExplore( node, frontier, explore):
-
+    qu = Q.PriorityQueue()
     while not frontier.empty():
         temp1 = frontier.get()
-        if np.array_equal(node, temp1):
+        qu.put(copy.deepcopy(temp1))
+        if np.array_equal(node.Node, temp1.Node):
+            print("in frontier")
             return False
+    frontier = qu
     cexpplore = copy.deepcopy(explore)
     for i in explore:
         if np.array_equal(node.Node, i.Node):
+            print("in explore")
             return False
     return True
 def inFrontierWithHigherCost(node,frontier):
@@ -104,6 +109,8 @@ def Unifor_Cost_Search(problem):
     explore = []
     i = 0
     while  True:
+        # print("the len of explore", len(explore), "the size of the q",len(frontier))
+        print("is the frontier empty ? ", frontier.empty())
         if frontier.empty():
             return 'failure'
         node1 = frontier.get()
@@ -111,15 +118,23 @@ def Unifor_Cost_Search(problem):
         if problem.Goal_Test(node1.Node) == True:
             return node1.Node
         explore.append(node1)
+        t = []
         for eachAction in problem.Actions(node1.Node):
-                print("actions each", eachAction)
-                childa = child(eachAction,"problem",node1.Cost+1)
+
+                childnode = copy.deepcopy(eachAction)
+                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1))
+
                 if notFrontierOrExplore(childa,frontier,explore):
-                    frontier.put(childa)
+                    t.append(childa)
                     print("not in expore or frontier", childa.Node)
                 elif inFrontierWithHigherCost(childa,frontier):
-                     print(" with lower Cost")
-        i = i+1
+                    print(" with lower Cost")
+        j = 0
+        print("len",  len(t))
+        while(j < len(t)):
+            frontier.put(t[j])
+            j = j+1
+        i=i+1
 
 
 if __name__ == "__main__":
@@ -127,7 +142,7 @@ if __name__ == "__main__":
     print("Welcome to Bertie Woosters 8-puzzle solver. ")
     ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle\n" )
     if ValInput ==  1:
-        m = np.matrix([[2,1,3], [4,0,6], [7,8,5]])
+        m = np.matrix([[1,2,3], [7,4,0], [8,6,5]])
         print(len(m))
 
         p = problem(m,None,0,goal)
@@ -137,7 +152,8 @@ if __name__ == "__main__":
         print("2. A* with the Misplaced Tile heuristic.")
         algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
         if algorithmType == 1:
-            Unifor_Cost_Search(p)
+            wow = Unifor_Cost_Search(p)
+            print("solution",wow)
 
 
     elif ValInput == 2:
