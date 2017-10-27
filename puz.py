@@ -28,49 +28,51 @@ class problem():
         row,col = node.shape
         row = row-1
         col = col-1
-        loc =[]
-        print(row, col)
+        loc =[0,0]
+
         i = 0
-        while i < row:
-            j = 0
-            while j < col:
-                if node.item(i,j) == 0:
-                    row = i
-                    col = j
+        print(node,"where is zero")
+        while i <= row:
+            j= 0
+            while j <= col:
+                print(node[i,j])
+                if node[i,j] == 0:
+                    loc[0] = i
+                    loc[1] = j
                     break
                 j=j+1
             i=i+1
-        print("row, col", row,col)
+        print("row, col", loc)
         print("node needs actions", node)
-        if  j < col :                    #checking if you can move to the right
+        if  j < loc[1] :                    #checking if you can move to the right
             child1 = copy.deepcopy(node)
-            temp = child1.item(i,j)
-            temp2 = child1.item(i,j+1)
-            child1[i,j] = temp2
-            child1[i,j+1] = temp
+            temp = child1.item(loc[0],loc[1])
+            temp2 = child1.item(loc[0],loc[1]+1)
+            child1[loc[0],loc[1]+1] = temp2
+            child1[loc[0],loc[1]+1] = temp
             print("right")
             matixs.append(child1)
         if  j > 0:                      #checking if you could move to the left
             child2 = copy.deepcopy(node)
-            temp = child2.item(i,j)
-            child2[i,j] = child2.item(i,j-1)
-            child2[i,j-1] = temp
+            temp = child2.item(loc[0],loc[1])
+            child2[loc[0],loc[1]] = child2.item(loc[0],loc[1]-1)
+            child2[loc[0],loc[1]-1] = temp
             matrixs.append(child2)
             print("left",child2)
 
-        if  i < row :                #checking if you could move to the bottom
+        if  i < loc[0] :                #checking if you could move to the bottom
             chidl3 = copy.deepcopy(node)
-            temp = child3.item(i,j)
-            child3[i,j] = child3.item(i+1,j)
-            child3[i+1,j] = temp
+            temp = child3.item(iloc[0],loc[1])
+            child3[loc[0],loc[1]] = child3.item(loc[0]+1,loc[1])
+            child3[loc[0]+1,loc[1]] = temp
             matrixs.append(child3)
             print("bottom",child3)
 
         if  i > 0:                 #checking if yopu could move to the top
             child4 = copy.deepcopy(node)
-            temp = child4.item(i,j)
-            child4[i,j] = child4.item(i-1,j)
-            child4[i-1,j] = temp
+            temp = child4.item(loc[0],loc[1])
+            child4[loc[0],loc[1]] = child4.item(loc[0]-1,loc[1])
+            child4[loc[0]-1,loc[1]] = temp
             matrixs.append(child4)
             print("top",child4)
 
