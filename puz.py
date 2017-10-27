@@ -19,8 +19,8 @@ class problem():
       self.C = 1
       self.initial_state = None
       self.goal = g
-    def Goal_Test(node):
-        if np.array_equal(node, self.goal):
+    def Goal_Test(self,n):
+        if np.array_equal(n, self.goal):
             return True
         else:
             return False
@@ -28,38 +28,53 @@ class problem():
     def Actions(self,node):
         matrixs = []
         row,col = node.shape
-        for i in row:
-            for i in col:
+        row = row-1
+        col = col-1
+        loc =[]
+        print(row, col)
+        i = 0
+        while i < row:
+            j = 0
+            while j < col:
                 if node.item(i,j) == 0:
-                    loc = [i,j]
+                    loc.append(i)
+                    loc.append(j)
                     break
-        if  loc[1] < col - 1:                    #checking if you can move to the right
-            chidl1 = copy.deepcopy(node)
-            temp = child1.item(loc[0],loc[1])
-            temp2 = child1.item(loc[0],loc[1]+1)
-            child1[loc[0],loc[1]] = temp2
-            child1[loc[0],loc[1]+1] = temp
-            martixs.append(child1)
-        if  loc[1] > 0:                      #checking if you could move to the left
-            chidl2 = copy.deepcopy(node)
-            temp = child2.item(loc[0],loc[1])
-            child2[loc[0],loc[1]] = child2.item(loc[0],loc[1]-1)
-            child2[loc[0],loc[1]-1] = temp
-            martixs.append(child1)
-        if  loc[0] < row - 1:                #checking if you could move to the right
-            chidl3 = copy.deepcopy(node)
-            temp = child3.item(loc[0],loc[1])
-            child3[loc[0],loc[1]] = child3.item(loc[0]+1,loc[1])
-            child3[loc[0],loc[1]+1] = temp
-            martixs.append(child3)
-        if  loc[0] > 0:                 #checking if you could move to the right
-            chidl1 = copy.deepcopy(node)
-            temp = child1.item(loc[0],loc[1])
-            child1[loc[0],loc[1]] = child1.item(loc[0],loc[1]-1)
-            child1[loc[0],loc[1]-1] = temp
-            martixs.append(child1)
+                j=j+1
+            i=i+1
 
-        return martixs
+        if  j < col :                    #checking if you can move to the right
+            child1 = copy.deepcopy(node)
+            temp = child1.item(i,j)
+            temp2 = child1.item(i,j+1)
+            child1[i,j] = temp2
+            child1[i,j+1] = temp
+            print("right")
+            matixs.append(child1)
+        if  j > 0:                      #checking if you could move to the left
+            child2 = copy.deepcopy(node)
+            temp = child2.item(i,j)
+            child2[i,j] = child2.item(i,j-1)
+            child2[i,j-1] = temp
+            matrixs.append(child2)
+            print("left")
+
+        if  i < row :                #checking if you could move to the bottom
+            chidl3 = copy.deepcopy(node)
+            temp = child3.item(i,j)
+            child3[i,j] = child3.item(i+1,j)
+            child3[i+1,j] = temp
+            matrixs.append(child3)
+        if  i > 0:                 #checking if yopu could move to the top
+            child4 = copy.deepcopy(node)
+            temp = child4.item(i,j)
+            child4[i,j] = child4.item(i-1,j)
+            child4[i-1,j] = temp
+            matrixs.append(child4)
+
+        print(matrixs)
+
+        return matrixs
 
 
 def Unifor_Cost_Search(problem):
@@ -70,11 +85,18 @@ def Unifor_Cost_Search(problem):
     while True:
         if frontier.empty():
             return 'failure'
+        node = None
         node = frontier.get()
-        if problem.Goal_Test(node.Node):
+        print(node.Node)
+
+        if problem.Goal_Test(node.Node) == True:
             return node.Node
         for eachAction in problem.Actions(node.Node):
+            print(eachAction)
             childa = child(eachAction,"problem",node.Cost+1)
+            # if childa not in frontier or childa not in explore:
+            #     frontier.put(childa)
+
 
 if __name__ == "__main__":
     goal = np.matrix([[1,2,3], [4,5,6], [7,8,0]])
@@ -90,7 +112,8 @@ if __name__ == "__main__":
         print("1. Uniform Cost Search")
         print("2. A* with the Misplaced Tile heuristic.")
         algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
-        # if algorithmType == 1:
+        if algorithmType == 1:
+            Unifor_Cost_Search(p)
 
 
     elif ValInput == 2:
