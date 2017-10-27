@@ -31,29 +31,30 @@ class problem():
                 if node.item(i,j) == 0:
                     loc = [i,j]
                     break
-        if  loc[1] < col - 1                    #checking if you can move to the right
+        if  loc[1] < col - 1:                    #checking if you can move to the right
             chidl1 = copy.deepcopy(node)
             temp = child1.item(loc[0],loc[1])
-            child1.item(loc[0],loc[1]) = child1.item(loc[0],loc[1]+1)
-            child1.item(loc[0],loc[1]+1) = temp
+            temp2 = child1.item(loc[0],loc[1]+1)
+            child1[loc[0],loc[1]] = temp2
+            child1[loc[0],loc[1]+1] = temp
             martixs.append(child1)
-        if  loc[1] > 0                      #checking if you could move to the left
+        if  loc[1] > 0:                      #checking if you could move to the left
             chidl2 = copy.deepcopy(node)
             temp = child2.item(loc[0],loc[1])
-            child2.item(loc[0],loc[1]) = child2.item(loc[0],loc[1]-1)
-            child2.item(loc[0],loc[1]-1) = temp
+            child2[loc[0],loc[1]] = child2.item(loc[0],loc[1]-1)
+            child2[loc[0],loc[1]-1] = temp
             martixs.append(child1)
-        if  loc[0] < row - 1                #checking if you could move to the right
+        if  loc[0] < row - 1:                #checking if you could move to the right
             chidl3 = copy.deepcopy(node)
             temp = child3.item(loc[0],loc[1])
-            child3.item(loc[0],loc[1]) = child3.item(loc[0]+1,loc[1])
-            child3.item(loc[0],loc[1]+1) = temp
+            child3[loc[0],loc[1]] = child3.item(loc[0]+1,loc[1])
+            child3[loc[0],loc[1]+1] = temp
             martixs.append(child3)
-        if  loc[0] > 0                  #checking if you could move to the right
+        if  loc[0] > 0:                 #checking if you could move to the right
             chidl1 = copy.deepcopy(node)
             temp = child1.item(loc[0],loc[1])
-            child1.item(loc[0],loc[1]) = child1.item(loc[0],loc[1]-1)
-            child1.item(loc[0],loc[1]-1) = temp
+            child1[loc[0],loc[1]] = child1.item(loc[0],loc[1]-1)
+            child1[loc[0],loc[1]-1] = temp
             martixs.append(child1)
 
         return martixs
