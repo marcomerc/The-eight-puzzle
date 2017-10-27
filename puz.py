@@ -43,16 +43,18 @@ class problem():
                 j=j+1
             i=i+1
         print("row, col", loc)
+        i = i-1
+        j = j-1
+        print(i,j)
         print("node needs actions", node)
-        if  j < loc[1] :                    #checking if you can move to the right
+        if  i > loc[1] :                    #checking if you can move to the right
             child1 = copy.deepcopy(node)
             temp = child1.item(loc[0],loc[1])
-            temp2 = child1.item(loc[0],loc[1]+1)
-            child1[loc[0],loc[1]+1] = temp2
+            child1[loc[0],loc[1]] = child1.item(loc[0],loc[1]+1)
             child1[loc[0],loc[1]+1] = temp
-            print("right")
-            matixs.append(child1)
-        if  j > 0:                      #checking if you could move to the left
+            print("right",child1)
+            matrixs.append(child1)
+        if   0 < loc[1]:                      #checking if you could move to the left
             child2 = copy.deepcopy(node)
             temp = child2.item(loc[0],loc[1])
             child2[loc[0],loc[1]] = child2.item(loc[0],loc[1]-1)
@@ -60,15 +62,15 @@ class problem():
             matrixs.append(child2)
             print("left",child2)
 
-        if  i < loc[0] :                #checking if you could move to the bottom
-            chidl3 = copy.deepcopy(node)
-            temp = child3.item(iloc[0],loc[1])
+        if  i > loc[0] :                #checking if you could move to the bottom
+            child3 = copy.deepcopy(node)
+            temp = child3.item(loc[0],loc[1])
             child3[loc[0],loc[1]] = child3.item(loc[0]+1,loc[1])
             child3[loc[0]+1,loc[1]] = temp
             matrixs.append(child3)
             print("bottom",child3)
 
-        if  i > 0:                 #checking if yopu could move to the top
+        if  0 < loc[0]:                 #checking if yopu could move to the top
             child4 = copy.deepcopy(node)
             temp = child4.item(loc[0],loc[1])
             child4[loc[0],loc[1]] = child4.item(loc[0]-1,loc[1])
@@ -85,18 +87,15 @@ def notFrontierOrExplore( node, frontier, explore):
             return False
     cexpplore = copy.deepcopy(explore)
     for i in explore:
-        if np.array_equal(node, i):
+        if np.array_equal(node.Node, i.Node):
             return False
     return True
-def inFrontierWithHigherCost(node):
+def inFrontierWithHigherCost(node,frontier):
     while not frontier.empty():
         temp1 = frontier.get()
-        if np.array_equal(node, temp1):
-            return False
-    cexpplore = copy.deepcopy(explore)
-
-
-
+        if node.Cost < temp1.Cost and np.array_equal(temp1.node,node.Node):
+            return True
+    return False
 
 def Unifor_Cost_Search(problem):
     node = child(problem.node,"problem", 0)
@@ -104,28 +103,23 @@ def Unifor_Cost_Search(problem):
     frontier.put(node)
     explore = []
     i = 0
-    while i < 2:
+    while  True:
         if frontier.empty():
             return 'failure'
-        print(frontier,"iterating at ", i)
         node1 = frontier.get()
         print("loop", node1.Node)
-
         if problem.Goal_Test(node1.Node) == True:
             return node1.Node
-        e = problem.Actions(node1.Node)
-        print(e,"allow actions")
-        j=0
-        while j < len(e):
-            eachAction = e[j]
-            print("actions each", eachAction)
-            childa = child(eachAction,"problem",node1.Cost+1)
-            if notFrontierOrExplore(childa,frontier,explore):
-                frontier.put(childa)
-                print("not in expore or frontier", childa.Node)
-
-            j=1+j
-        i=i+1
+        explore.append(node1)
+        for eachAction in problem.Actions(node1.Node):
+                print("actions each", eachAction)
+                childa = child(eachAction,"problem",node1.Cost+1)
+                if notFrontierOrExplore(childa,frontier,explore):
+                    frontier.put(childa)
+                    print("not in expore or frontier", childa.Node)
+                elif inFrontierWithHigherCost(childa,frontier):
+                     print(" with lower Cost")
+        i = i+1
 
 
 if __name__ == "__main__":
@@ -133,7 +127,7 @@ if __name__ == "__main__":
     print("Welcome to Bertie Woosters 8-puzzle solver. ")
     ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle\n" )
     if ValInput ==  1:
-        m = np.matrix([[2,1,3], [4,5,6], [7,8,0]])
+        m = np.matrix([[2,1,3], [4,0,6], [7,8,5]])
         print(len(m))
 
         p = problem(m,None,0,goal)
