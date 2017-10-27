@@ -11,8 +11,6 @@ class child():
     def __cmp__(self, other):
         return cmp(self.Cost, other.priority)
 
-
-
 class problem():
     def __init__(self,initial_node, state, cost,g):
       self.node = copy.deepcopy(initial_node)
@@ -37,12 +35,13 @@ class problem():
             j = 0
             while j < col:
                 if node.item(i,j) == 0:
-                    loc.append(i)
-                    loc.append(j)
+                    row = i
+                    col = j
                     break
                 j=j+1
             i=i+1
-
+        print("row, col", row,col)
+        print("node needs actions", node)
         if  j < col :                    #checking if you can move to the right
             child1 = copy.deepcopy(node)
             temp = child1.item(i,j)
@@ -57,7 +56,7 @@ class problem():
             child2[i,j] = child2.item(i,j-1)
             child2[i,j-1] = temp
             matrixs.append(child2)
-            print("left")
+            print("left",child2)
 
         if  i < row :                #checking if you could move to the bottom
             chidl3 = copy.deepcopy(node)
@@ -65,16 +64,36 @@ class problem():
             child3[i,j] = child3.item(i+1,j)
             child3[i+1,j] = temp
             matrixs.append(child3)
+            print("bottom",child3)
+
         if  i > 0:                 #checking if yopu could move to the top
             child4 = copy.deepcopy(node)
             temp = child4.item(i,j)
             child4[i,j] = child4.item(i-1,j)
             child4[i-1,j] = temp
             matrixs.append(child4)
-
-        print(matrixs)
+            print("top",child4)
 
         return matrixs
+def notFrontierOrExplore( node, frontier, explore):
+
+    while not frontier.empty():
+        temp1 = frontier.get()
+        if np.array_equal(node, temp1):
+            return False
+    cexpplore = copy.deepcopy(explore)
+    for i in explore:
+        if np.array_equal(node, i):
+            return False
+    return True
+def inFrontierWithHigherCost(node):
+    while not frontier.empty():
+        temp1 = frontier.get()
+        if np.array_equal(node, temp1):
+            return False
+    cexpplore = copy.deepcopy(explore)
+
+
 
 
 def Unifor_Cost_Search(problem):
@@ -82,20 +101,29 @@ def Unifor_Cost_Search(problem):
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     explore = []
-    while True:
+    i = 0
+    while i < 2:
         if frontier.empty():
             return 'failure'
-        node = None
-        node = frontier.get()
-        print(node.Node)
+        print(frontier,"iterating at ", i)
+        node1 = frontier.get()
+        print("loop", node1.Node)
 
-        if problem.Goal_Test(node.Node) == True:
-            return node.Node
-        for eachAction in problem.Actions(node.Node):
-            print(eachAction)
-            childa = child(eachAction,"problem",node.Cost+1)
-            # if childa not in frontier or childa not in explore:
-            #     frontier.put(childa)
+        if problem.Goal_Test(node1.Node) == True:
+            return node1.Node
+        e = problem.Actions(node1.Node)
+        print(e,"allow actions")
+        j=0
+        while j < len(e):
+            eachAction = e[j]
+            print("actions each", eachAction)
+            childa = child(eachAction,"problem",node1.Cost+1)
+            if notFrontierOrExplore(childa,frontier,explore):
+                frontier.put(childa)
+                print("not in expore or frontier", childa.Node)
+
+            j=1+j
+        i=i+1
 
 
 if __name__ == "__main__":
