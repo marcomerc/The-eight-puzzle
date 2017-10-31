@@ -212,6 +212,7 @@ def  Manhattan(problem):
     while  True:
         if frontier.empty():
             return 'failure'
+        
         node1 = frontier.get()
         if problem.Goal_Test(node1.Node) == True:
             return node1.Node
