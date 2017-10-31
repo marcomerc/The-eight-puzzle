@@ -255,7 +255,7 @@ if __name__ == "__main__":
 
 
     elif ValInput == 2:
-        print("Enter your puzzle, use a zero to represent the blank")
+        print("Enter your  puzzle, use a zero to represent the blank")
         rowOne = raw_input("Enter the first row, use space or tabs between numbers\n" )
         rowTwo = raw_input("Enter the second row, use space or tabs between numbers\n")
         rowTree = raw_input("Enter the third row, use space or tabs between numbers\n")
