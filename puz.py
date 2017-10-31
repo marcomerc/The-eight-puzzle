@@ -13,7 +13,16 @@ class child():
         return hash(self.Node)
     def __cmp__(self, other):
         return cmp(self.priority, other.priority)
-
+dic = {}
+dic[1] = [0,0]
+dic[2] = [0,1]
+dic[3] = [0,2]
+dic[4] = [1,0]
+dic[5] = [1,1]
+dic[6] = [1,2]
+dic[7] = [2,0]
+dic[8] = [2,1]
+dic[0] = [2,2]
 class problem():
     def __init__(self,initial_node, state, cost,g):
       self.node = copy.deepcopy(initial_node)
@@ -35,6 +44,9 @@ class problem():
 
         i = 0
         # print(node,"where is zero")
+
+
+
         while i <= row:
             j= 0
             while j <= col:
@@ -99,6 +111,7 @@ def inFrontierWithHigherCost(node,frontier):
             return True
         return False
     return False
+
 def misplaceTilesHeristic(node):
     compare =np.matrix([[1,2,3], [4,5,6], [7,8,0]])
     i = 0
@@ -110,30 +123,28 @@ def misplaceTilesHeristic(node):
     while i <= row-1:
         j= 0
         while j <= col-1:
-            # print(node[i,j])
             if node[i,j] != compare[i,j]:
                 count =count+1
             j=j+1
         i=i+1
     return count
 
-
 def ManhattanDistance(node):
-    compare =np.matrix([[1,2,3], [4,5,6], [7,8,0]])
-    i = 0
     count = 0
     i = 0
+
     row,col = node.shape
     # print(node,"where is zero")
     while i <= row-1:
         j= 0
+
         while j <= col-1:
-            # print(node[i,j])
-            if node[i,j] != compare[i,j]:
-                count =count+1
+            loc = dic[ node[i,j] ]
+            count =count+ abs(loc[0] - i) + abs(loc[1] - j)
             j=j+1
         i=i+1
     return count
+
 
 def Unifor_Cost_Search(problem):
     node = child(problem.node,"problem", 1)
@@ -151,7 +162,6 @@ def Unifor_Cost_Search(problem):
         if problem.Goal_Test(node1.Node) == True:
             return node1.Node
         explore.append(node1)
-        t = []
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
@@ -162,7 +172,7 @@ def Unifor_Cost_Search(problem):
                     # print("not in expore or frontier", childa.Node)
                 elif inFrontierWithHigherCost(childa,frontier):
                     print("lower COST")
-        
+
         i=i+1
 
 
@@ -180,11 +190,36 @@ def  misplaceTiles(problem):
         if problem.Goal_Test(node1.Node) == True:
             return node1.Node
         explore.append(node1)
-        t = []
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
                 childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+misplaceTilesHeristic(eachAction)))
+                if notFrontierOrExplore(childa,frontierHash,explore):
+
+                    frontierHash[childa] =  childa
+                    frontier.put(childa)
+                    # print("not in expore or frontier", childa.Node)
+                elif inFrontierWithHigherCost(childa,frontier):
+                    print("lower COST")
+        i=i+1
+def  Manhattan(problem):
+    node = child(problem.node,"problem", 1)
+    frontier =  Q.PriorityQueue()
+    frontier.put(node)
+    frontierHash  = {}
+    explore = []
+    i = 0
+    while  True:
+        if frontier.empty():
+            return 'failure'
+        node1 = frontier.get()
+        if problem.Goal_Test(node1.Node) == True:
+            return node1.Node
+        explore.append(node1)
+        print("number of child expand",i, )
+        for eachAction in problem.Actions(node1.Node):
+                childnode = copy.deepcopy(eachAction)
+                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+ ManhattanDistance(eachAction)))
                 if notFrontierOrExplore(childa,frontierHash,explore):
 
                     frontierHash[childa] =  childa
@@ -214,6 +249,9 @@ if __name__ == "__main__":
         if algorithmType == 2:
             wow = misplaceTiles(p)
             print("solution",wow)
+        if algorithmType == 3:
+            wow = Manhattan(p)
+            print("solution",wow)
 
 
     elif ValInput == 2:
@@ -224,15 +262,20 @@ if __name__ == "__main__":
         rowOne = map(int, rowOne.split())
         rowTwo = map(int, rowTwo.split())
         rowTree = map(int, rowTree.split())
-        m = (rowOne,rowTwo,rowTree)
-        problem = parent(m,0)
+        print(rowOne)
+        m = np.matrix([rowOne,rowTwo,rowTree])
+        p = problem(m,None,0, goal)
         print("Enter your choice of algorithm")
         print("1. Uniform Cost Search")
         print("2. A* with the Misplaced Tile heuristic.")
         algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
+
         if algorithmType == 1:
             wow = Unifor_Cost_Search(p)
             print("solution",wow)
         if algorithmType == 2:
             wow = misplaceTiles(p)
+            print("solution",wow)
+        if algorithmType == 3:
+            wow = Manhattan(p)
             print("solution",wow)
