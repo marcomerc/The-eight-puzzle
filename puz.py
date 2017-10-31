@@ -9,6 +9,14 @@ class child():
           self.Node = n
           self.Cost = cost
           self.STATE = state
+
+    def __init__(self, n,state, cost,d):
+      self.priority = cost
+      self.Cost = cost
+      self.Node = n
+      self.Cost = cost
+      self.STATE = state
+      self.depth = d
     def __hash__(self):
         return hash(self.Node)
     def __cmp__(self, other):
@@ -147,7 +155,7 @@ def ManhattanDistance(node):
 
 
 def Unifor_Cost_Search(problem):
-    node = child(problem.node,"problem", 1)
+    node = child(problem.node,"problem", 1,0)
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     frontierHash  = {}
@@ -160,12 +168,12 @@ def Unifor_Cost_Search(problem):
 
         # print("loop", node1.Node)
         if problem.Goal_Test(node1.Node) == True:
-            return node1.Node
+            return node1
         explore.append(node1)
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1))
+                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1,node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
@@ -177,7 +185,7 @@ def Unifor_Cost_Search(problem):
 
 
 def  misplaceTiles(problem):
-    node = child(problem.node,"problem", 1)
+    node = child(problem.node,"problem", 1,0)
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     frontierHash  = {}
@@ -188,12 +196,12 @@ def  misplaceTiles(problem):
             return 'failure'
         node1 = frontier.get()
         if problem.Goal_Test(node1.Node) == True:
-            return node1.Node
+            return node1
         explore.append(node1)
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+misplaceTilesHeristic(eachAction)))
+                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+misplaceTilesHeristic(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
 
                     frontierHash[childa] =  childa
@@ -203,7 +211,7 @@ def  misplaceTiles(problem):
                     print("lower COST")
         i=i+1
 def  Manhattan(problem):
-    node = child(problem.node,"problem", 1)
+    node = child(problem.node,"problem", 1,0)
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     frontierHash  = {}
@@ -212,15 +220,15 @@ def  Manhattan(problem):
     while  True:
         if frontier.empty():
             return 'failure'
-        
+
         node1 = frontier.get()
         if problem.Goal_Test(node1.Node) == True:
-            return node1.Node
+            return node1
         explore.append(node1)
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+ ManhattanDistance(eachAction)))
+                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+ ManhattanDistance(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
 
                     frontierHash[childa] =  childa
@@ -246,13 +254,13 @@ if __name__ == "__main__":
         algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
         if algorithmType == 1:
             wow = Unifor_Cost_Search(p)
-            print("solution",wow)
+            print("solution",wow.Node, wow.depth)
         if algorithmType == 2:
             wow = misplaceTiles(p)
-            print("solution",wow)
+            print("solution",wow.Node, wow.depth)
         if algorithmType == 3:
             wow = Manhattan(p)
-            print("solution",wow)
+            print("solution",wow.Node, wow.depth)
 
 
     elif ValInput == 2:
@@ -273,10 +281,10 @@ if __name__ == "__main__":
 
         if algorithmType == 1:
             wow = Unifor_Cost_Search(p)
-            print("solution",wow)
+            print("solution",wow.Node, wow.depth)
         if algorithmType == 2:
             wow = misplaceTiles(p)
-            print("solution",wow)
+            print("solution",wow.Node, wow.depth)
         if algorithmType == 3:
             wow = Manhattan(p)
-            print("solution",wow)
+            print("solution",wow.Node, wow.depth)
