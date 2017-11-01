@@ -2,27 +2,20 @@ import sys
 import numpy as np
 import copy
 import Queue as Q
-class child():
-    def __init__(self, n,state, cost):
-          self.priority = cost
-          self.Cost = cost
-          self.Node = n
-          self.Cost = cost
-          self.STATE = state
-
+class child():                     # the class that i made for each node.
+    # the way the class is initialized and takes in the following items
     def __init__(self, n,state, cost,d):
-      self.priority = cost
-      self.Cost = cost
-      self.Node = n
-      self.Cost = cost
-      self.STATE = state
-      self.depth = d
+      self.priority = cost          #the priority to keep track of the queue
+      self.Cost = cost                # the cost is set to cost
+      self.Node = n                 #the node itself
+      self.STATE = state            # the state.
+      self.depth = d                #keeps track of the depth of the node
     def __hash__(self):
-        return hash(self.Node)
-    def __cmp__(self, other):
-        return cmp(self.priority, other.priority)
-dic = {}
-dic[1] = [0,0]
+         return hash(self.Node)      # this is for the has table. and what to hash
+    def __cmp__(self, other):       #what the queue is organized,
+        return cmp(self.priority, other.priority) # by the priiority which is the cost
+dic = {}                               #this dictionary is use to find the locations of each
+dic[1] = [0,0]                          #element in the goal state
 dic[2] = [0,1]
 dic[3] = [0,2]
 dic[4] = [1,0]
@@ -31,14 +24,17 @@ dic[6] = [1,2]
 dic[7] = [2,0]
 dic[8] = [2,1]
 dic[0] = [2,2]
-class problem():
+class problem():        # a class for the problem.
+# the initialization of the problem class
     def __init__(self,initial_node, state, cost,g):
       self.node = copy.deepcopy(initial_node)
       self.C = 1
       self.initial_state = None
       self.goal = g
-    def Goal_Test(self,n):
-        if np.array_equal(n, self.goal):
+      #a function checks if the node passed in is the same as the goal.
+      # if a solution was found  
+    def Goal_Test(self,node):
+        if np.array_equal(node, self.goal):
             return True
         else:
             return False
@@ -243,7 +239,7 @@ if __name__ == "__main__":
     print("Welcome to Bertie Woosters 8-puzzle solver. ")
     ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle\n" )
     if ValInput ==  1:
-        m = np.matrix([[1,2,3], [7,4,0], [8,6,5]])
+        m = np.matrix([[1,6,2], [4,3,8], [7,0,5]])
         print(len(m))
         p = problem(m,None,0,goal)
 
