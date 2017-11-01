@@ -104,7 +104,6 @@ def notFrontierOrExplore( node, frontier, explore):
     i = 0
     while i < len(explore):
         if np.array_equal(node.Node,explore[i].Node):
-            print("in explore")
             return False
         i+=1
     return True
@@ -148,7 +147,7 @@ def ManhattanDistance(node):
 
 
 def Unifor_Cost_Search(problem):
-    node = child(problem.node,"problem", 1,0)
+    node = child(problem.node,None, 1,0)
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     frontierHash  = {}
@@ -166,7 +165,7 @@ def Unifor_Cost_Search(problem):
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1,node1.depth+1))
+                childa = copy.deepcopy(child(childnode,node1,node1.Cost+1,node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
@@ -179,7 +178,7 @@ def Unifor_Cost_Search(problem):
 
 
 def  misplaceTiles(problem):
-    node = child(problem.node,"problem", 1,0)
+    node = child(problem.node,None, 1,0)
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     frontierHash  = {}
@@ -195,7 +194,7 @@ def  misplaceTiles(problem):
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+misplaceTilesHeristic(eachAction),node1.depth+1))
+                childa = copy.deepcopy(child(childnode,node1,node1.depth+misplaceTilesHeristic(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
@@ -204,7 +203,7 @@ def  misplaceTiles(problem):
                     frontier.put(childa)
         i=i+1
 def  Manhattan(problem):
-    node = child(problem.node,"problem", 1,0)
+    node = child(problem.node,None, 1,0)
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     frontierHash  = {}
@@ -221,7 +220,7 @@ def  Manhattan(problem):
         print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+ ManhattanDistance(eachAction),node1.depth+1))
+                childa = copy.deepcopy(child(childnode,node1,node1.depth+ ManhattanDistance(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
@@ -236,7 +235,7 @@ if __name__ == "__main__":
     print("Welcome to Bertie Woosters 8-puzzle solver. ")
     ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle" )
     if ValInput ==  1:
-        m = np.matrix([[1,2,3], [4,0,6], [7,5,8]])
+        m = np.matrix([[0,1,2], [4,5,3], [7,8,6]])
         print(len(m))
         p = problem(m,None,0,goal)
 
@@ -248,6 +247,7 @@ if __name__ == "__main__":
         if algorithmType == 1:
             wow = Unifor_Cost_Search(p)
             print("solution",wow.Node, wow.depth)
+            print(wow.STATE.Node)
         if algorithmType == 2:
             wow = misplaceTiles(p)
             print("solution",wow.Node, wow.depth)
