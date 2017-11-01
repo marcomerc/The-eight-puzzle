@@ -32,13 +32,14 @@ class problem():        # a class for the problem.
       self.initial_state = None
       self.goal = g
       #a function checks if the node passed in is the same as the goal.
-      # if a solution was found  
+      # if a solution was found
     def Goal_Test(self,node):
         if np.array_equal(node, self.goal):
             return True
         else:
             return False
-
+    #passing in node checks if the possible ways of nodes that could be expand too
+    # and returns them.
     def Actions(self,node):
         matrixs = []
         row,col = node.shape
@@ -47,10 +48,7 @@ class problem():        # a class for the problem.
         loc =[0,0]
 
         i = 0
-        # print(node,"where is zero")
-
-
-
+        #this finds where thez zero is located in the node.
         while i <= row:
             j= 0
             while j <= col:
@@ -61,20 +59,18 @@ class problem():        # a class for the problem.
                     break
                 j=j+1
             i=i+1
-        # print("row, col", loc)
         i = i-1
         j = j-1
-        # print(i,j)
-        # print("node needs actions", node)
+        # checks base on the location of zoro what it could expand too
         if  i > loc[1] :                    #checking if you can move to the right
-            child1 = copy.deepcopy(node)
+            child1 = copy.deepcopy(node)   #making a copy of the node and change the values
             temp = child1.item(loc[0],loc[1])
             child1[loc[0],loc[1]] = child1.item(loc[0],loc[1]+1)
             child1[loc[0],loc[1]+1] = temp
             # print("right",child1)
             matrixs.append(child1)
         if   0 < loc[1]:                      #checking if you could move to the left
-            child2 = copy.deepcopy(node)
+            child2 = copy.deepcopy(node)       #making a copy of the node and change the values
             temp = child2.item(loc[0],loc[1])
             child2[loc[0],loc[1]] = child2.item(loc[0],loc[1]-1)
             child2[loc[0],loc[1]-1] = temp
@@ -82,7 +78,7 @@ class problem():        # a class for the problem.
             # print("left",child2)
 
         if  i > loc[0] :                #checking if you could move to the bottom
-            child3 = copy.deepcopy(node)
+            child3 = copy.deepcopy(node) #making a copy of the node and change the values
             temp = child3.item(loc[0],loc[1])
             child3[loc[0],loc[1]] = child3.item(loc[0]+1,loc[1])
             child3[loc[0]+1,loc[1]] = temp
@@ -90,7 +86,7 @@ class problem():        # a class for the problem.
             # print("bottom",child3)
 
         if  0 < loc[0]:                 #checking if yopu could move to the top
-            child4 = copy.deepcopy(node)
+            child4 = copy.deepcopy(node) #making a copy of the node and change the values
             temp = child4.item(loc[0],loc[1])
             child4[loc[0],loc[1]] = child4.item(loc[0]-1,loc[1])
             child4[loc[0]-1,loc[1]] = temp
