@@ -94,31 +94,34 @@ class problem():        # a class for the problem.
             # print("top",child4)
 
         return matrixs
+    #checking if the node exist in the frontier or the explore.
 def notFrontierOrExplore( node, frontier, explore):
-    if node in frontier:
-        print("in frontier" )
-        return False
-    if node in explore:
-        print("in explore")
-        return False
-
+    #iterating throught frontier and checking if its equal to node
+    for key in frontier:
+        if np.array_equal(frontier[key].Node,node.Node):
+            return False
+    #iterating throught explore and see if its equal to the node.
+    i = 0
+    while i < len(explore):
+        if np.array_equal(node.Node,explore[i].Node):
+            print("in explore")
+            return False
+        i+=1
     return True
 def inFrontierWithHigherCost(node,frontier):
-    if node in frontier:
-        temp = frontier[node]
-        if temp.Cost > node.Cost:
-            frontier[node] = node
-            return True
-        return False
-    return False
+    #checking if  its in the frontier with a higher cost.
+    for key in frontier:
+        if np.array_equal(frontier[key].Node,node.Node):
+            if frontier[key].Cost > node.Cost:
+                return True
 
+    return False
+#checking  how many tiles are misplace.
 def misplaceTilesHeristic(node):
     compare =np.matrix([[1,2,3], [4,5,6], [7,8,0]])
     i = 0
     count = 0
-    i = 0
     row,col = node.shape
-
     # print(node,"where is zero")
     while i <= row-1:
         j= 0
@@ -128,18 +131,16 @@ def misplaceTilesHeristic(node):
             j=j+1
         i=i+1
     return count
-
+#checking the ManhattanDistance and calculate it
 def ManhattanDistance(node):
     count = 0
     i = 0
-
     row,col = node.shape
     # print(node,"where is zero")
     while i <= row-1:
         j= 0
-
         while j <= col-1:
-            loc = dic[ node[i,j] ]
+            loc = dic[ node[i,j] ]      # use a dictionary to get locations of goal state tiles.
             count =count+ abs(loc[0] - i) + abs(loc[1] - j)
             j=j+1
         i=i+1
@@ -170,8 +171,9 @@ def Unifor_Cost_Search(problem):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
                     # print("not in expore or frontier", childa.Node)
-                elif inFrontierWithHigherCost(childa,frontier):
-                    print("lower COST")
+                elif inFrontierWithHigherCost(childa,frontierHash):
+                    frontierHash[childa] = childa
+                    frontier.put(childa)
 
         i=i+1
 
@@ -195,12 +197,11 @@ def  misplaceTiles(problem):
                 childnode = copy.deepcopy(eachAction)
                 childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+misplaceTilesHeristic(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
-
                     frontierHash[childa] =  childa
                     frontier.put(childa)
-                    # print("not in expore or frontier", childa.Node)
-                elif inFrontierWithHigherCost(childa,frontier):
-                    print("lower COST")
+                elif inFrontierWithHigherCost(childa,frontierHash):
+                    frontierHash[childa] = childa
+                    frontier.put(childa)
         i=i+1
 def  Manhattan(problem):
     node = child(problem.node,"problem", 1,0)
@@ -222,20 +223,20 @@ def  Manhattan(problem):
                 childnode = copy.deepcopy(eachAction)
                 childa = copy.deepcopy(child(childnode,"problem",node1.Cost+1+ ManhattanDistance(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
-
                     frontierHash[childa] =  childa
                     frontier.put(childa)
                     # print("not in expore or frontier", childa.Node)
-                elif inFrontierWithHigherCost(childa,frontier):
-                    print("lower COST")
+                elif inFrontierWithHigherCost(childa,frontierHash):
+                    frontierHash[childa] = childa
+                    frontier.put(childa)
         i=i+1
 
 if __name__ == "__main__":
     goal = np.matrix([[1,2,3], [4,5,6], [7,8,0]])
     print("Welcome to Bertie Woosters 8-puzzle solver. ")
-    ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle\n" )
+    ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle" )
     if ValInput ==  1:
-        m = np.matrix([[1,6,2], [4,3,8], [7,0,5]])
+        m = np.matrix([[1,2,3], [4,0,6], [7,5,8]])
         print(len(m))
         p = problem(m,None,0,goal)
 
