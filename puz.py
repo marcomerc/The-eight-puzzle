@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import copy
+import timeit
 import Queue as Q
 class child():                     # the class that i made for each node.
     # the way the class is initialized and takes in the following items
@@ -13,7 +14,7 @@ class child():                     # the class that i made for each node.
     def __hash__(self):
          return hash(self.Node)      # this is for the has table. and what to hash
     def __cmp__(self, other):       #what the queue is organized,
-        return cmp(self.priority, other.priority) # by the priiority which is the cost
+        return cmp(self.Cost, other.priority) # by the priiority which is the cost
 dic = {}                               #this dictionary is use to find the locations of each
 dic[1] = [0,0]                          #element in the goal state
 dic[2] = [0,1]
@@ -147,29 +148,34 @@ def ManhattanDistance(node):
 
 
 def Unifor_Cost_Search(problem):
-    node = child(problem.node,None, 1,0)
+    node = child(problem.node,None, 0,0)
     frontier =  Q.PriorityQueue()
     frontier.put(node)
     frontierHash  = {}
     explore = []
     i = 0
+    numFront = 1
+    maxFront = 1
     while  True:
         if frontier.empty():
             return 'failure'
         node1 = frontier.get()
+        numFront-=1
+        if maxFront < numFront:
+            maxFront = numFront
 
         # print("loop", node1.Node)
         if problem.Goal_Test(node1.Node) == True:
-            return node1
+            return node1,i,maxFront
         explore.append(node1)
-        print("number of child expand",i, )
+        # print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,node1,node1.Cost+1,node1.depth+1))
+                childa = copy.deepcopy(child(childnode,copy.deepcopy(node1),node1.Cost+1,node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
-                    # print("not in expore or frontier", childa.Node)
+                    numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash):
                     frontierHash[childa] = childa
                     frontier.put(childa)
@@ -184,24 +190,32 @@ def  misplaceTiles(problem):
     frontierHash  = {}
     explore = []
     i = 0
+    numFront = 1
+    maxFront = 1
     while  True:
+        i=i+1
         if frontier.empty():
             return 'failure'
         node1 = frontier.get()
+        numFront-=1
+        if maxFront < numFront:
+            maxFront = numFront
+
         if problem.Goal_Test(node1.Node) == True:
-            return node1
+            return node1,i,maxFront
         explore.append(node1)
-        print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
-                childa = copy.deepcopy(child(childnode,node1,node1.depth+misplaceTilesHeristic(eachAction),node1.depth+1))
+                childa = copy.deepcopy(child(childnode,copy.deepcopy(node1),node1.depth+misplaceTilesHeristic(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
+                    numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash):
                     frontierHash[childa] = childa
                     frontier.put(childa)
-        i=i+1
+        i+=1
+
 def  Manhattan(problem):
     node = child(problem.node,None, 1,0)
     frontier =  Q.PriorityQueue()
@@ -209,51 +223,89 @@ def  Manhattan(problem):
     frontierHash  = {}
     explore = []
     i = 0
+    numFront = 1
+    maxFront = 1
     while  True:
+
         if frontier.empty():
             return 'failure'
 
         node1 = frontier.get()
+        if maxFront < numFront:
+            maxFront = numFront
         if problem.Goal_Test(node1.Node) == True:
-            return node1
+            return node1,i,maxFront
         explore.append(node1)
-        print("number of child expand",i, )
         for eachAction in problem.Actions(node1.Node):
                 childnode = copy.deepcopy(eachAction)
                 childa = copy.deepcopy(child(childnode,node1,node1.depth+ ManhattanDistance(eachAction),node1.depth+1))
                 if notFrontierOrExplore(childa,frontierHash,explore):
                     frontierHash[childa] =  childa
                     frontier.put(childa)
-                    # print("not in expore or frontier", childa.Node)
+                    numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash):
                     frontierHash[childa] = childa
                     frontier.put(childa)
-        i=i+1
+        i+=1
+def printaa(w):
+    wow = w[0]
+    s = []
+    g = wow.STATE
+
+    while not np.array_equal(wow.Node,m):
+        s.append(copy.deepcopy(wow))
+        wow = wow.STATE
+    i = len(s) - 1
+    print("Expanding  state")
+    print(m)
+
+    while i > 0 :
+
+        print("The best state to expand with a g(n) = ", s[i].Cost, " and h(n) =", 0 )
+        print(s[i].Node)
+        i-=1
+    print("Goal!!!")
+    print("to solve the problem the search algorithm expanded a total of",w[1], "nodes.")
+    print("the maximum number of nodes in the queue at any one time was ", w[2])
+    print(w[0].depth)
+
+
+
+
 
 if __name__ == "__main__":
     goal = np.matrix([[1,2,3], [4,5,6], [7,8,0]])
     print("Welcome to Bertie Woosters 8-puzzle solver. ")
     ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle" )
     if ValInput ==  1:
-        m = np.matrix([[0,1,2], [4,5,3], [7,8,6]])
+        m = np.matrix([[1,2,3], [7,4,0], [8,6,5]])
         print(len(m))
         p = problem(m,None,0,goal)
 
 
-        print("Enter your choice of algorithm")
-        print("1. Uniform Cost Search")
-        print("2. A* with the Misplaced Tile heuristic.")
-        algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
-        if algorithmType == 1:
-            wow = Unifor_Cost_Search(p)
-            print("solution",wow.Node, wow.depth)
-            print(wow.STATE.Node)
-        if algorithmType == 2:
-            wow = misplaceTiles(p)
-            print("solution",wow.Node, wow.depth)
-        if algorithmType == 3:
-            wow = Manhattan(p)
-            print("solution",wow.Node, wow.depth)
+        # print("Enter your choice of algorithm")
+        # print("1. Uniform Cost Search")
+        # print("2. A* with the Misplaced Tile heuristic.")
+        # algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
+        # if algorithmType == 1:
+        start = timeit.timeit()
+        wow = Unifor_Cost_Search(p)
+        end = timeit.timeit()
+        print("time",abs(end - start) )
+        printaa(wow)
+        # if algorithmType == 2:
+        start = timeit.timeit()
+        wow = misplaceTiles(p)
+        end = timeit.timeit()
+        print("time",abs(end - start) )
+        printaa(wow)
+        # if algorithmType == 3:
+        s = timeit.timeit()
+        wow = Manhattan(p)
+        e = timeit.timeit()
+        print("time",e - s)
+        printaa(wow)
+
 
 
     elif ValInput == 2:
@@ -274,10 +326,10 @@ if __name__ == "__main__":
 
         if algorithmType == 1:
             wow = Unifor_Cost_Search(p)
-            print("solution",wow.Node, wow.depth)
+            printaa(wow)
         if algorithmType == 2:
             wow = misplaceTiles(p)
-            print("solution",wow.Node, wow.depth)
+            printaa(wow)
         if algorithmType == 3:
             wow = Manhattan(p)
-            print("solution",wow.Node, wow.depth)
+            printaa(wow)
