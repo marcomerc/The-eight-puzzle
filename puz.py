@@ -156,6 +156,8 @@ def Unifor_Cost_Search(problem): # uniform cost function
     i = 0
     numFront = 1
     maxFront = 1
+    print("expanding state")
+    print(node.Node)
     while  True:                        #while true
         if frontier.empty():            #check if frontier is the empty
             return 'failure'
@@ -178,14 +180,9 @@ def Unifor_Cost_Search(problem): # uniform cost function
                     frontier.put(childa)
                     numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash): #check if its in frontier with a higher cost
-                    tempQ =  Q.PriorityQueue()
-                    while not frontier.empty:
-                        temp = frontier.get()
-                        if np.array_equal(temp.Node,childa.Node):
-                            temp.Cost = childa.Cost
-                            tempQ.put(temp)
-                    frontier.queue = copy.deepcopy(tempQ.queue)
                     frontierHash[childa] = childa
+                    frontier.put(childa)
+
 
         i=i+1
 
@@ -199,6 +196,8 @@ def  misplaceTiles(problem): # function for the misplaceTiles
     i = 0
     numFront = 1
     maxFront = 1
+    print("expanding state")
+    print(node.Node)
     while  True:
         i=i+1
         if frontier.empty():            #check if the frontier is empty
@@ -223,14 +222,10 @@ def  misplaceTiles(problem): # function for the misplaceTiles
                     frontier.put(childa)
                     numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash): #check if its frontier with higher cost
-                    tempQ =  Q.PriorityQueue()
-                    while not frontier.empty:
-                        temp = frontier.get()
-                        if np.array_equal(temp.Node,childa.Node):
-                            temp.Cost = childa.Cost
-                            tempQ.put(temp)
-                    frontier.queue = copy.deepcopy(tempQ.queue)
                     frontierHash[childa] = childa
+                    frontier.put(childa)
+
+
         i+=1
 
 def  Manhattan(problem): # the Manhattan distance function
@@ -240,6 +235,8 @@ def  Manhattan(problem): # the Manhattan distance function
     frontierHash  = {}
     explore = []
     i = 0
+    print("expanding state")
+    print(node.Node)
     numFront = 1
     maxFront = 1
     while  True:
@@ -263,27 +260,21 @@ def  Manhattan(problem): # the Manhattan distance function
                     frontier.put(childa)
                     numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash): # checking if its in frontier with higher cost
-                    tempQ =  Q.PriorityQueue()
-                    while not frontier.empty:
-                        temp = frontier.get()
-                        if np.array_equal(temp.Node,childa.Node):
-                            temp.Cost = childa.Cost
-                            tempQ.put(temp)
-                    frontier.queue = copy.deepcopy(tempQ.queue)
                     frontierHash[childa] = childa
+                    frontier.put(childa)
         i+=1
 
 
 def printaa(w): # prints the final menu
-    wow = w[0]
-    s = []
-    # if len(wow) == 1:
-    #     return
-    # else:
-    print("Goal!!!")
-    print("to solve the problem the search algorithm expanded a total of",w[1], "nodes.")
-    print("the maximum number of nodes in the queue at any one time was ", w[2])
-    print("the depth of the goal node was ",w[0].depth)
+    if type(w) is str:
+        print(w)
+    else:
+        wow = w[0]
+        s = []
+        print("Goal!!!") #it prints the menu
+        print("to solve the problem the search algorithm expanded a total of",w[1], "nodes.")
+        print("the maximum number of nodes in the queue at any one time was ", w[2])
+        print("the depth of the goal node was ",w[0].depth )
 
 
 
@@ -292,32 +283,32 @@ def printaa(w): # prints the final menu
 if __name__ == "__main__":
 
     goal = np.matrix([[1,2,3], [4,5,6], [7,8,0]])
-    print("Welcome to Marco Mercado's 8-puzzle solver. ")
+    print("Welcome to Marco Mercado's 8-puzzle solver. ")  ## it prints the top of the menu
     ValInput = input("Type \"1\" to use a default puzzle, or \"2\" to enter your own puzzle\n" )
     if ValInput ==  1:
-        m = np.matrix([[1,2,0], [4,5,3], [7,8,6]])
+        m = np.matrix([[0,3,5], [8,4,7], [1,6,2]])
         p = problem(m,None,0,goal)
 
 
         print("Enter your choice of algorithm")
         print("1. Uniform Cost Search")
-        print("2. A* with the Misplaced Tile heuristic.")
+        print("2. A* with the Misplaced Tile heuristic.") #input on which algorithm to get.
         algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
         if algorithmType == 1:
-            wow = Unifor_Cost_Search(p)
+            wow = Unifor_Cost_Search(p) # calls the uniform algorithm
             printaa(wow)
         if algorithmType == 2:
-            wow = misplaceTiles(p)
+            wow = misplaceTiles(p) #calls the misplaceTiles
 
             printaa(wow)
-        if algorithmType == 3:
+        if algorithmType == 3: #calls the Manhattan
             wow = Manhattan(p)
             printaa(wow)
 
 
 
     elif ValInput == 2:
-        print("Enter your  puzzle, use a zero to represent the blank")
+        print("Enter your  puzzle, use a zero to represent the blank") #input on which puzzle to use
         rowOne = raw_input("Enter the first row, use space or tabs between numbers\n" )
         rowTwo = raw_input("Enter the second row, use space or tabs between numbers\n")
         rowTree = raw_input("Enter the third row, use space or tabs between numbers\n")
@@ -329,15 +320,14 @@ if __name__ == "__main__":
         p = problem(m,None,0, goal)
         print("Enter your choice of algorithm")
         print("1. Uniform Cost Search")
-        print("2. A* with the Misplaced Tile heuristic.")
+        print("2. A* with the Misplaced Tile heuristic.") # choose the algorithm
         algorithmType = int(raw_input("3. A* with the Manhattan distance heuristic.\n"))
-
         if algorithmType == 1:
-            wow = Unifor_Cost_Search(p)
-            # printaa(wow)
+            wow = Unifor_Cost_Search(p) # calls the uniform algorithm
+            printaa(wow)
         if algorithmType == 2:
-            wow = misplaceTiles(p)
-            # printaa(wow)
-        if algorithmType == 3:
+            wow = misplaceTiles(p)  #calls the misplaceTiles
+            printaa(wow)
+        if algorithmType == 3: #calls the Manhattan
             wow = Manhattan(p)
-            # printaa(wow)
+            printaa(wow)
