@@ -223,7 +223,12 @@ def  misplaceTiles(problem): # function for the misplaceTiles
                     numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash): #check if its frontier with higher cost
                     frontierHash[childa] = childa
-                    frontier.put(childa)
+                    for it in range(len(frontier.queue)):
+                        if np.array_equal(frontier.queue[it].Node,childa.Node):
+                            if frontier.queue[it].Cost > childa.Cost:
+                                frontier.queue[it].Cost = childa.Cost
+
+
 
 
         i+=1
@@ -261,7 +266,10 @@ def  Manhattan(problem): # the Manhattan distance function
                     numFront+=1
                 elif inFrontierWithHigherCost(childa,frontierHash): # checking if its in frontier with higher cost
                     frontierHash[childa] = childa
-                    frontier.put(childa)
+                    for it in range(len(frontier.queue)):
+                        if np.array_equal(frontier.queue[it].Node,childa.Node):
+                            if frontier.queue[it].Cost > childa.Cost:
+                                frontier.queue[it].Cost = childa.Cost
         i+=1
 
 
