@@ -47,7 +47,7 @@ Mnahattan Distribution is the most efficient searching algorithm, while Uniform 
 
 ## Authors
 
-* **Marco Mercado** - *Initial work* - [PurpleBooth](https://github.com/marcomerc)
+* **Marco Mercado** - *all work done by marco* - [MarcoMerc](https://github.com/marcomerc)
 
 
 ## License
