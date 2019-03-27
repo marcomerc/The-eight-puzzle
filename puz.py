@@ -11,8 +11,8 @@ class child():                     # the class that i made for each node.
       self.Node = n                 #the node itself
       self.STATE = state            # the state.
       self.depth = d                #keeps track of the depth of the node
-    def __hash__(self):
-         return hash(self.Node)      # this is for the has table. and what to hash
+    def __hash__(self): #np.asarray(Ma).ravel()
+         return hash(np.array2string(self.Node))      # this is for the has table. and what to hash
     def __cmp__(self, other):       #what the queue is organized,
         return cmp(self.Cost, other.priority) # by the priiority which is the cost
 dic = {}                               #this dictionary is use to find the locations of each
@@ -182,8 +182,6 @@ def Unifor_Cost_Search(problem): # uniform cost function
                 elif inFrontierWithHigherCost(childa,frontierHash): #check if its in frontier with a higher cost
                     frontierHash[childa] = childa
                     frontier.put(childa)
-
-
         i=i+1
 
 
